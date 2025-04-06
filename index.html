@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard Entreprises Bruxelles</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 2rem; }
+    button { margin: 0.5rem; padding: 0.5rem 1rem; }
+    ul { margin-top: 1.5rem; }
+    li { margin-bottom: 1rem; }
+  </style>
+</head>
+<body>
+  <h1>Nouvelles entreprises créées</h1>
+
+  <div>
+    <button onclick="charger('jour')">Aujourd’hui</button>
+    <button onclick="charger('semaine')">Cette semaine</button>
+    <button onclick="charger('mois')">Ce mois-ci</button>
+  </div>
+
+  <div id="resultats">Clique sur un bouton pour charger les données.</div>
+
+  <script>
+    async function charger(periode) {
+      const container = document.getElementById("resultats");
+      container.innerHTML = "Chargement...";
+      try {
+        const response = await fetch(`https://bce-api-bruxelles.onrender.com/api/entreprises?periode=${periode}`);
+        const data = await response.json();
+        if (data.length === 0) {
+          container.innerHTML = "Aucune entreprise trouvée.";
+        } else {
+          container.innerHTML = "<ul>" + data.map(ent => 
+            `<li><strong>${ent.titre}</strong><br><a href="${ent.lien}" target="_blank">Voir la publication</a><br><em>${ent.date}</em></li>`
+          ).join('') + "</ul>";
+        }
+      } catch (e) {
+        container.innerHTML = "Erreur lors du chargement.";
+      }
+    }
+  </script>
+</body>
+</html>
